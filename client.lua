@@ -110,7 +110,13 @@ AddEventHandler('toggleJailDoors', function(t)
 	end
 end)
 
+RegisterNetEvent("pf_cl:setPosition")
+AddEventHandler("pf_cl:setPosition", function(id, x, y, z)
+	SetEntityCoordsNoOffset(GetPlayerPed(GetPlayerFromServerId(id)), x, y, z)
+end)
+
 Citizen.CreateThread(function()
+	DoScreenFadeIn(1000)
 	while true do
 		Wait(0)
 
@@ -118,10 +124,10 @@ Citizen.CreateThread(function()
 			local pos = GetEntityCoords(PlayerPedId(), true)
 
 			for k,v in ipairs(teleports) do
-				if Vdist(pos, v.pos) < 2.0 then
+				if Vdist(pos, v.pos) < 2.0 and not IsPedRagdoll(PlayerPedId()) then
 					DoScreenFadeOut(500)
 					Wait(500)
-					SetEntityCoordsNoOffset(PlayerPedId(), v.tPos)
+					TriggerServerEvent("pf_sv:setPosition", v.tPos.x, v.tPos.y, v.tPos.z)
 					TriggerEvent("pf_cl:setLocation", v.location)
 					Wait(500)
 					DoScreenFadeIn(1000)
